@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Resume Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .resume-container {
+            background: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            display: none; /* Start hidden */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #fda085;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s;
+            display: block;
+            margin: 0 auto; /* Center the image */
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin: 10px 0;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 1.75em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1em;
+            margin: 5px 0;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 12px 20px;
+            border: none;
+            background: linear-gradient(90deg, #f6d365, #fda085);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            font-size: 1em;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #fda085, #f6d365);
+            transform: translateY(-3px);
+        }
+
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, background-color 0.3s;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .resume-container {
+                padding: 20px;
+            }
+
+            .profile-pic {
+                width: 120px;
+                height: 120px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        /* Form Styles */
+        form {
+            margin-bottom: 30px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Image Upload Styles */
+        #imageUpload {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Form to Capture User Input -->
+    <div class="form-section">
+        <h2>Resume Input Form</h2>
+        <form id="resumeForm">
+            <h3>Personal Information</h3>
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="file" id="imageUpload" accept="image/*" required>
+            
+            <h3>Education</h3>
+            <input type="text" id="education" placeholder="Education" required>
+            
+            <h3>Work Experience</h3>
+            <input type="text" id="workExperience" placeholder="Work Experience" required>
+            
+            <h3>Skills</h3>
+            <input type="text" id="skills" placeholder="Skills" required>
+
+            <button type="submit">Generate Resume</button>
+        </form>
+    </div>
+
+    <!-- Resume Container -->
+    <div class="resume-container" id="resumeContainer">
+        <header class="header">
+            <img src="" alt="Profile Picture" class="profile-pic" id="profilePic" style="display: none;">
+            <h1 id="resumeName">rimshah ali </h1>
+            <p id="resumeEmail">rimshahali11@gmail.com/p>
+        </header>
+        
+        <section class="education section">
+            <h2>Education</h2>
+            <p id="resumeEducation">Details about your education...</p>
+        </section>
+
+        <section class="skills section" id="skillsSection">
+            <h2>Skills</h2>
+            <p id="resumeSkills">Details about your skills...</p>
+        </section>
+
+        <section class="work-experience section">
+            <h2>Work Experience</h2>
+            <p id="resumeWorkExperience">Details about your work experience...</p>
+        </section>
+
+        <button id="resumeDownload">Download Resume as PDF</button>
+        <button id="editResume">Edit Details</button>
+    </div>
+
+    <script>
+        const resumeForm = document.getElementById('resumeForm');
+        const resumeName = document.getElementById('resumeName');
+        const resumeEmail = document.getElementById('resumeEmail');
+        const resumeEducation = document.getElementById('resumeEducation');
+        const resumeWorkExperience = document.getElementById('resumeWorkExperience');
+        const resumeSkills = document.getElementById('resumeSkills');
+        const profilePic = document.getElementById('profilePic');
+        const resumeContainer = document.getElementById('resumeContainer');
+
+        resumeForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Capture user input
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const education = document.getElementById('education').value;
+            const workExperience = document.getElementById('workExperience').value;
+            const skills = document.getElementById('skills').value;
+
+            // Handle image upload
+            const imageUpload = document.getElementById('imageUpload').files[0];
+            if (imageUpload) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    profilePic.src = e.target.result; // Set the src of the profile pic
+                    profilePic.style.display = 'block'; // Show the image
+                };
+                reader.readAsDataURL(imageUpload);
+            }
+
+            // Update the resume
+            resumeName.innerText = name;
+            resumeEmail.innerText = email;
+            resumeEducation.innerText = education;
+            resumeWorkExperience.innerText = workExperience;
+            resumeSkills.innerText = skills;
+
+            // Show the resume container
+            resumeContainer.style.display = 'block';
+
+            // Optionally, clear the form after submission
+            resumeForm.reset();
+        });
+
+        // Download Resume as PDF
+        document.getElementById('resumeDownload').addEventListener('click', function () {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Adding content to the PDF
+            doc.setFontSize(22);
+            doc.text(resumeName.innerText, 20, 30);
+            doc.setFontSize(16);
+            doc.text(resumeEmail.innerText, 20, 40);
+            doc.text("Education: " + resumeEducation.innerText, 20, 50);
+            doc.text("Work Experience: " + resumeWorkExperience.innerText, 20, 60);
+            doc.text("Skills: " + resumeSkills.innerText, 20, 70);
+            doc.addImage(profilePic.src, 'JPEG', 20, 80, 50, 50); // Add profile image
+
+            // Save the PDF
+            doc.save('resume.pdf');
+        });
+
+        // Edit Resume Functionality
+        document.getElementById('editResume').addEventListener('click', function () {
+            // Populate the form with existing resume details
+            document.getElementById('name').value = resumeName.innerText;
+            document.getElementById('email').value = resumeEmail.innerText;
+            document.getElementById('education').value = resumeEducation.innerText;
+            document.getElementById('workExperience').value = resumeWorkExperience.innerText;
+            document.getElementById('skills').value = resumeSkills.innerText;
+            
+            // Hide the resume and show the form
+            resumeContainer.style.display = 'none';
+            document.getElementById('imageUpload').value = ''; // Reset image input
+            document.getElementById('name').focus(); // Focus on the name input
+        });
+    </script>
+</body>
+
+</html>
